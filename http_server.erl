@@ -6,7 +6,9 @@ intialize_server(Port)->
 	spawn(?MODULE,listen_Server,[Port]).
 
 listen_Server(Port)->
-	{ok,Socket}=gen_tcp:listen(Port,[{active,false}]),
+	{ok,Socket}=gen_tcp:listen(Port,[{active,false},{backlog,10}]),
+	%active option set as falsr specify that the packets sent from the peer are not delivered as message
+	%backlog specify that 10 connection can be in queue, if not specified default value is 5
 	accept_server(Socket).
 
 accept_server(Socket)->
@@ -16,7 +18,7 @@ accept_server(Socket)->
 	accept_server(Socket).
 
 handleFunc(Sock)->
-	Message=message("Hello, this is my server"),
+	Message=message("Hello, this is a server"),
 	gen_tcp:send(Sock,Message),
 	gen_tcp:close(Sock).
 
